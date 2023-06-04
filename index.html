@@ -3,17 +3,14 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="style.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/xml2js/0.4.23/xml2js.min.js"></script>
         <title>Visualizator</title>
     </head>
     <body>
         <div class="container">
             <div id="top" class="topBar">
-                <p>GRR</p>
-                <form>
-                    <input type="text" name="grr" id="grr" placeholder="00000000" onfocus="this.blur">
-                    <button type="submit" id="submit">Buscar</button>
-                </form>
+                <p id="nome">Visualizator </p>
+                    <input type="text" name="grr" id="inputGrr" placeholder="GRR00000000" onfocus="this.blur">
+                    <button type="button" id="pesquisar">Buscar</button>
             </div>
             <div>
                 <div class="gridDisciplina" id="obrigatorias">
@@ -80,9 +77,12 @@
 
 
                 </div>
-                <div class="gridDisciplina" id="optativas">
+                <!-- <div class="gridDisciplina" id="optativas">
                         
-                </div>
+                </div> -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>    
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
+                <script src="script.js"></script>
             </div>
         </div>
     </body>

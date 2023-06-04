@@ -1,85 +1,108 @@
-class alunos{
-    constructor(nome, grr, curso, semestre){
-        this.nome = nome;
-        this.grr = grr;
-        this.curso = curso;
-        this.semestre = semestre;
-    }
+// Autor: Thales Carvalho
+// Função: Realizar a leitura de um arquivo XML e exibir os dados em um objeto JavaScript
 
-    getNome(){
-        return this.nome;
-    }
+let disciplinas = document.getElementById("obrigatorias");
 
-    getGrr(){
-        return this.grr;
-    }
+disciplinas.addEventListener("contextmenu", onContextMenu);
 
-    getCurso(){
-        return this.curso;
-    }
-
-    getSemestre(){
-        return this.semestre;
-    }
-
-    setNome(nome){
-        this.nome = nome;
-    }
-
-    setGrr(grr){
-        this.grr = grr;
-    }
-
-    setCurso(curso){
-        this.curso = curso;
-    }
-
-    setSemestre(semestre){
-        this.semestre = semestre;
-    }
-
-
+function onContextMenu(event) {
+    event.preventDefault();
 }
 
-class disciplinas{
-    constructor(nome, codigo){
-        this.nome = nome;
-        this.codigo = codigo;
-    }
+// Realiza a leitura do arquivo XML
+$(document).ready(function () {
+    $('#pesquisar').click(function () {
+        let grr = $('#inputGrr').val();
 
-    getNome(){
-        return this.nome;
-    }
+        $.ajax({
+            type: "GET",
+            url: "alunos.xml",
+            dataType: "xml",
+            success: function (xml) {
+                let coursesObj = {}; // Objeto JavaScript
 
-    getCodigo(){
-        return this.codigo;
-    }
+                // Procura as materias do aluno no arquivo XML filtrando pelo GRR
+                $(xml).find('ALUNO').each(function () {
+                    let matrAluno = $(this).find('MATR_ALUNO').text();
+                    
+                    if (matrAluno === grr) {
+                        let codAtivCurric = $(this).find('COD_ATIV_CURRIC').text();
+                        let nomeAtivCurric = $(this).find('NOME_ATIV_CURRIC').text();
+                        let situacao = $(this).find('SITUACAO').text();
+                        let mediaFinal = $(this).find('MEDIA_FINAL').text();
+                        let descr_estrutura = $(this).find('DESCR_ESTRUTURA').text();
+                        let sigla = $(this).find('SIGLA').text();
+                        let frequencia = $(this).find('FREQUENCIA').text();
+                        let chTotal = $(this).find('CH_TOTAL').text();
+                        let ano = $(this).find('ANO').text();
+                        coursesObj[codAtivCurric] = {
+                            "nome": nomeAtivCurric,
+                            "situacao": situacao,
+                            "sigla": sigla,
+                            "mediaFinal": mediaFinal,
+                            "frequencia": frequencia,
+                            "descr_estrutura": descr_estrutura,
+                            "chTotal": chTotal,
+                            "ano": ano
+                        };
+                    }
+                });
 
-    setNome(nome){
-        this.nome = nome;
-    }
-
-    setCodigo(codigo){
-        this.codigo = codigo;
-    }
-
-}
-
-fetch('alunos.xml')
-  .then(response => response.text())
-  .then(xmlString => {
-    var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-    var xml2js = new XML2JS.Parser();
-    xml2js.parseString(xmlDoc, function(err, result) {
-      if (err) {
-        console.error('Error:', err);
-      } else {
-        var json = JSON.stringify(result);
-        console.log(json);
-      }
+                console.log(coursesObj); // Exibe o objeto no console do navegador
+                percorreArray(coursesObj); // Percorre o objeto e exibe as materias na tela 
+            },
+            error: function () {
+                console.log('Ocorreu um erro ao processar o arquivo XML.');
+            }
+        });
     });
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+
+});
+
+// Altera o nome do aluno na tela
+function changeName(nomeAluno) {
+    let nome = document.getElementById("nome");
+    nome.innerHTML = nomeAluno;
+}
+
+function percorreArray(coursesObj) {
+    // 
+    for (let codAtivCurric in coursesObj) {
+        let materia = coursesObj[codAtivCurric];
+        changeColor(materia.sigla, codAtivCurric, coursesObj);
+    }
+}
+
+
+
+// Modifica a cor da div "materia" de acordo com a situação do aluno
+function changeColor(sigla, codAtivCurric, coursesObj) {
+    let materia = document.getElementById(codAtivCurric);
+
+    if (materia){        
+        let popupContent = `Histórico da disciplina ${codAtivCurric} - ${coursesObj[codAtivCurric].nome}: \n\n
+        Frequência: ${coursesObj[codAtivCurric].frequencia} \n
+        Média Final: ${coursesObj[codAtivCurric].mediaFinal} \n
+        Ano: ${coursesObj[codAtivCurric].ano} \n
+        `;
+        alert(popupContent);
+        if (sigla === "Aprovado") {
+            materia.style.backgroundColor = "#03C988";
+        } else if (sigla === "Reprovado") {
+            materia.style.backgroundColor = "#E94560";
+        } else if (sigla === "Repr. Freq"){
+            materia.style.backgroundColor = "#E94560";
+        } else if (sigla === "Equivale") {
+            materia.style.backgroundColor = "#FFE569";        
+        } else if (sigla === "Matricula") {
+            materia.style.backgroundColor = "#46C2CB";
+        }
+         else {
+            materia.style.backgroundColor = "#FFFFFF";
+            materia.style.color = "#000000";
+        }
+    }
+    else{
+        console.log("Materia não encontrada");
+    }
+}   
