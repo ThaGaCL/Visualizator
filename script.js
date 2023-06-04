@@ -4,10 +4,29 @@
 let disciplinas = document.getElementById("obrigatorias");
 
 disciplinas.addEventListener("contextmenu", onContextMenu);
+disciplinas.addEventListener("click", onClick);
 
+// Função para exibir o menu de contexto
 function onContextMenu(event) {
     event.preventDefault();
+    let popupContent = `Histórico da disciplina ${event.target.id} - ${coursesObj[event.target.id].nome}: \n\n
+    Frequência: ${coursesObj[event.target.id].frequencia} \n
+    Média Final: ${coursesObj[event.target.id].mediaFinal} \n
+    Ano: ${coursesObj[event.target.id].ano} \n
+    `;
+    alert(popupContent);
 }
+
+// Função para exibir o popup com as informações da disciplina
+function onClick(event) {
+    let popupContent = `Histórico da disciplina ${event.target.id} - ${coursesObj[event.target.id].nome}: \n\n
+    Frequência: ${coursesObj[event.target.id].frequencia} \n
+    Média Final: ${coursesObj[event.target.id].mediaFinal} \n
+    Ano: ${coursesObj[event.target.id].ano} \n
+    `;
+    alert(popupContent);
+}
+
 
 // Realiza a leitura do arquivo XML
 $(document).ready(function () {
@@ -19,7 +38,7 @@ $(document).ready(function () {
             url: "alunos.xml",
             dataType: "xml",
             success: function (xml) {
-                let coursesObj = {}; // Objeto JavaScript
+                window.coursesObj = {}; // Objeto JavaScript
 
                 // Procura as materias do aluno no arquivo XML filtrando pelo GRR
                 $(xml).find('ALUNO').each(function () {
@@ -79,13 +98,8 @@ function percorreArray(coursesObj) {
 function changeColor(sigla, codAtivCurric, coursesObj) {
     let materia = document.getElementById(codAtivCurric);
 
-    if (materia){        
-        let popupContent = `Histórico da disciplina ${codAtivCurric} - ${coursesObj[codAtivCurric].nome}: \n\n
-        Frequência: ${coursesObj[codAtivCurric].frequencia} \n
-        Média Final: ${coursesObj[codAtivCurric].mediaFinal} \n
-        Ano: ${coursesObj[codAtivCurric].ano} \n
-        `;
-        alert(popupContent);
+    if (materia){     
+           
         if (sigla === "Aprovado") {
             materia.style.backgroundColor = "#03C988";
         } else if (sigla === "Reprovado") {
